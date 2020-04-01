@@ -1,2 +1,4 @@
 
 migrations/staging_db.sql
+datasets/kaggle_artists.csv
+datasets/musicBrainz_ActiveArtists.csv
