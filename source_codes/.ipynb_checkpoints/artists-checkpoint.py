@@ -23,7 +23,7 @@ class Artists():
         df['type'] = df.type.fillna(0)
         df['area'] = df.type.fillna(0)
         df['gender'] = df.type.fillna(0)
-        df["is_active"] = df["ended"]
+        df["is_active"] =  df.ended.apply(lambda x : not(x))
         df = df.drop('ended', 1)
         return df.sort_values(by=['id'], ascending=True)
 
