@@ -38,6 +38,7 @@ where b.artist_mbid is not null ;
 --405 unique artist with mbid from a total of 554 (149 without mbid)
 
 
+
 -- join the two dataset to get list of unique artists usng spotify_id
 create table dim_spotifyArtist as
 select b.artist_spotify_id, b.artist_mbid, a.artist, b.artist_popularity
@@ -48,7 +49,6 @@ where b.artist_fychart_name is not null ;
 --405 unique artist with mbid from a total of 554 (149 without mbid)
 
 ALTER TABLE dim_spotifyartist ADD CONSTRAINT dim_spotifyartist_pk PRIMARY KEY (artist_spotify_id);
-
 
 
 --**************************************
@@ -69,11 +69,16 @@ ALTER TABLE dim_location ADD CONSTRAINT dim_location_pk PRIMARY KEY (region_id);
 --**************************************
 -- Derive Time Dimension Table
 --**************************************
+drop table dim_Time
+ 
 create table dim_Time as
+
 SELECT distinct to_char(start_date, 'yyyymmiw') as time_id, 
 to_char(start_date, 'yyyy') as year,
 to_char(start_date, 'mm') as month,
-to_char(start_date, 'iw') as week
+to_char(start_date, 'iw') as week, 
+to_char(start_date, 'Month') as month_name,
+start_date as chart_date
 FROM spotify_top_200_weekly
 order by 1;
 
@@ -98,8 +103,11 @@ ALTER TABLE dim_tracks ADD CONSTRAINT dim_tracks_fk FOREIGN KEY (artist_spotify_
 --**********************************************
 -- Derive streamcount_popularity fact Table
 --**********************************************
+drop table fct_streamcount_popularity
+
 create table fct_streamcount_popularity as
-select a.region_id, c.time_id, b.artist_spotify_id , sum(d.streams) as sumofstreams, avg(b.artist_popularity) as avg_popularity
+select a.region_id, c.time_id, b.artist_spotify_id , sum(d.streams) 
+as sumofstreams, avg(b.artist_popularity) as avg_popularity, count(d.week_position ) as tracks_in_top200
 from dim_location a, 
 	dim_spotifyartist b, 
 	dim_time c, 
@@ -108,9 +116,11 @@ where c.time_id = to_char(d.start_date, 'yyyy') || to_char(d.start_date, 'mm') |
 		 and d.region = a.region and d.artist = b.artist
 		 and d.artist = b.artist 
 group by a.region_id, c.time_id, b.artist_spotify_id
-order by  a.region_id, c.time_id desc ,sum(d.streams) desc;
+order by  a.region_id, c.time_id desc,sumofstreams desc, tracks_in_top200 desc;
 
 ALTER TABLE fct_streamcount_popularity ADD CONSTRAINT fct_streamcount_popularity_pk PRIMARY KEY (region_id,time_id,artist_spotify_id);
+
+select * from fct_streamcount_popularity
 
 
 select * from dim_spotifyartist ds 
