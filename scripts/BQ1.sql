@@ -107,7 +107,9 @@ drop table fct_streamcount_popularity
 
 create table fct_streamcount_popularity as
 select a.region_id, c.time_id, b.artist_spotify_id , sum(d.streams) 
-as sumofstreams, avg(b.artist_popularity) as avg_popularity, count(d.week_position ) as tracks_in_top200
+as sumofstreams, 
+--avg(b.artist_popularity) as avg_popularity, 
+count(d.week_position) as tracks_in_top200
 from dim_location a, 
 	dim_spotifyartist b, 
 	dim_time c, 
