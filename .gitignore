@@ -2,3 +2,5 @@
 migrations/staging_db.sql
 datasets/kaggle_artists.csv
 datasets/musicBrainz_ActiveArtists.csv
+datasets/ukEventsDetails.csv
+ADMP-PeerAssessmentForm-201920.doc
