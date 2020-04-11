@@ -5,3 +5,5 @@ datasets/musicBrainz_ActiveArtists.csv
 datasets/ukEventsDetails.csv
 ADMP-PeerAssessmentForm-201920.doc
 datasets/activeArtists.csv
+scripts/BQ3_artists_202004111047.sql
+scripts/BQ3_venues_202004111047.sql

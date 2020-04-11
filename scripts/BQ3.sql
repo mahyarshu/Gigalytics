@@ -1,3 +1,26 @@
+-- Drop table
+
+-- DROP TABLE public.dim_mbartist;
+
+CREATE TABLE public.dim_mbartist (
+	mbid text NULL,
+	"name" text NULL,
+	"type" float8 NULL,
+	gender float8 NULL
+);
+
+
+-- Drop table
+
+-- DROP TABLE public.dim_venues;
+
+CREATE TABLE public.dim_venues (
+	venue_id float8 NULL,
+	"name" text NULL,
+	city text NULL,
+	capacity float8 NULL
+);
+
 --fct_event_artist_venue
 SELECT 
 	mb.mbid as artist_id,
