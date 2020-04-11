@@ -1,5 +1,36 @@
 -- Drop table
 
+-- DROP TABLE public."songkick_ukEvents_withName";
+
+CREATE TABLE public."songkick_ukEvents_withName" (
+	"eventId" int8 NULL,
+	"eventType" text NULL,
+	"eventUri" text NULL,
+	"ageRestriction" text NULL,
+	mbid text NULL,
+	"venueId" float8 NULL,
+	"startDate" text NULL,
+	"startTime" text NULL,
+	country text NULL,
+	"flaggedAsEnded" bool NULL,
+	"eventName" text NULL,
+	popularity float8 NULL
+);
+
+-- Drop table
+
+-- DROP TABLE public.musicbrainz_artists;
+
+CREATE TABLE public.musicbrainz_artists (
+	gid text NULL,
+	"name" text NULL,
+	"type" float8 NULL,
+	gender float8 NULL,
+	is_active bool NULL
+);
+
+-- Drop table
+
 -- DROP TABLE public.dim_mbartist;
 
 CREATE TABLE public.dim_mbartist (

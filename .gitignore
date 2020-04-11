@@ -7,3 +7,7 @@ ADMP-PeerAssessmentForm-201920.doc
 datasets/activeArtists.csv
 scripts/BQ3_artists_202004111047.sql
 scripts/BQ3_venues_202004111047.sql
+datasets/musicbrainz_artists_202004111128.csv
+scripts/BQ3_musicbrainz_artists_202004111126.sql
+scripts/BQ3_songkick_ukEvents_withName__202004111135.sql
+scripts/BQ3.sql
