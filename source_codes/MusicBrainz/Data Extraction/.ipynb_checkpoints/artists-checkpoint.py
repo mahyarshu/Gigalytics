@@ -9,8 +9,9 @@ class Artists():
     def etl(self):
         try:
             df = self.__extract()
-            transformed_df = self.__transform(df)
-            self.__load(transformed_df)
+            #transformed_df = self.__transform(df)
+            #self.__load(transformed_df)
+            return df
             print('data loaded successfully')
         except Exception as e:
             print('error occured !!' + str(e))
