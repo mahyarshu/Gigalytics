@@ -1,24 +1,5 @@
 -- Drop table
 
--- DROP TABLE public."songkick_ukEvents_withName";
-
-CREATE TABLE public."songkick_ukEvents_withName" (
-	"eventId" int8 NULL,
-	"eventType" text NULL,
-	"eventUri" text NULL,
-	"ageRestriction" text NULL,
-	mbid text NULL,
-	"venueId" float8 NULL,
-	"startDate" text NULL,
-	"startTime" text NULL,
-	country text NULL,
-	"flaggedAsEnded" bool NULL,
-	"eventName" text NULL,
-	popularity float8 NULL
-);
-
--- Drop table
-
 -- DROP TABLE public.musicbrainz_artists;
 
 CREATE TABLE public.musicbrainz_artists (
@@ -40,67 +21,45 @@ CREATE TABLE public.dim_mbartist (
 	gender float8 NULL
 );
 
-
 -- Drop table
 
 -- DROP TABLE public.dim_venues;
 
 CREATE TABLE public.dim_venues (
-	venue_id float8 NULL,
+	venue_id float8 null primary key,
 	"name" text NULL,
 	city text NULL,
 	capacity float8 NULL
 );
 
---fct_event_artist_venue
-SELECT 
-	mb.mbid as artist_id,
-	ve.venue_id,
-	ve.city,
-	count(*) count_event,
-	sum(popularity) sum_popularity,
-	avg(popularity) avg_popularity
-into fct_event_artist_venue
-FROM public."songkick_ukEvents_withName" eve --50,155
-inner join public.dim_mbartist mb on eve.mbid  = mb.mbid --48,665
-inner join public.dim_venues ve on eve."venueId"  = ve.venue_id  --46063
-group by artist_id, mb.name, ve.venue_id , city;
+update dim_venues
+set city = 'Unknown' where city is null;
 
---fct_event_venues
-SELECT 
-	ve.venue_id,
-	ve.city,
-	count(*) count_event,
-	sum(popularity) sum_popularity,
-	avg(popularity) avg_popularity
-into fct_event_venues
-FROM public."songkick_ukEvents_withName" eve --50,155
-inner join public.dim_venues ve on eve."venueId"  = ve.venue_id  --46063
-group by ve.venue_id , city;
+create table public.dim_cities(
+	city_id bigint GENERATED ALWAYS AS identity primary key,
+	"name" text NULL
+);
 
---fct_event_cities
-SELECT 
-	ve.city,
-	count(*) count_event,
-	sum(popularity) sum_popularity,
-	avg(popularity) avg_popularity
-into fct_event_cities
-FROM public."songkick_ukEvents_withName" eve --50,155
-inner join public.dim_venues ve on eve."venueId"  = ve.venue_id  --46063
-group by city;
+insert into public.dim_cities (name)
+select distinct city from songkick_uk_events eve 
+inner join public.dim_venues ve on eve.venue_id  = ve.venue_id 
 
-update fct_event_cities
-set city = 'Unknown' where city is null
-
---fct_artist_cities
+-- dw_fct_city_venue_events
 SELECT 
-	mb.mbid as artist_id,
-	ve.city,
+	c.city_id,
+	ve.venue_id ,
+	t.time_id,
 	count(*) count_event,
-	sum(popularity) sum_popularity,
 	avg(popularity) avg_popularity
-into fct_artist_cities
-FROM public."songkick_ukEvents_withName" eve --50,155
-inner join public.dim_mbartist mb on eve.mbid  = mb.mbid --48,665
-inner join public.dim_venues ve on eve."venueId"  = ve.venue_id  --46063
-group by artist_id, mb.name, city;
+into dw_fct_city_venue_events
+FROM public.songkick_uk_events eve --50,155
+inner join public.dim_venues ve on eve.venue_id  = ve.venue_id  --46063
+inner join public.dim_cities c on ve.city = c."name" 
+inner join public.dim_time t on eve.start_date = t.chart_date 
+group by c.city_id, ve.venue_id , t.time_id;
+
+
+
+ALTER TABLE public.dw_fct_city_venue_events ADD CONSTRAINT dw_fct_city_venue_events_fk FOREIGN KEY (time_id) REFERENCES dim_time(time_id);
+ALTER TABLE public.dw_fct_city_venue_events ADD CONSTRAINT dw_fct_city_venue_events_fk_1 FOREIGN KEY (city_id) REFERENCES dim_cities(city_id);
+ALTER TABLE public.dw_fct_city_venue_events ADD CONSTRAINT dw_fct_city_venue_events_fk_2 FOREIGN KEY (venue_id) REFERENCES dim_venues(venue_id);
