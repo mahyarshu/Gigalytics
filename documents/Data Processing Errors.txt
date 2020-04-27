@@ -39,7 +39,7 @@
 		where event_id in (38038984);
 
 4. 	Issue: Events with venue id but no venue details
-	Action Taken: Exclude from venue analysis.
+	Action Taken: Exclude from event venue analysis.
 		/*
 		event_id	Venue_id
 		38949857	3000119
@@ -53,3 +53,7 @@
 		37545514	4233369
 		39585878	4386949
 		*/
+		
+5. 	Issue: About 30% (20934 out of 63995) events have no start-time.
+	Action Taken: Excluded from the event start time analysis 
+	
