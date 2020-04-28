@@ -2,6 +2,14 @@ update spotify_track_details set artist_mbid = '9eae7149-852d-49e9-8c44-e5469fed
 where track_spotify_id in (select spotify_id from spotify_top_200_weekly
 where artist = 'Dappy'); --'57XM1QkO2zyCgcybsYd9Cj';
 
+/*
+select * from spotify_track_details std 
+where track_spotify_id in (select spotify_id from spotify_top_200_weekly
+where artist = 'Dappy')
+*/
+
+
+
 update spotify_top_200_weekly set  artist = 'RussMB'
 where artist in ('RussMB', 'Russ Millions');
 
@@ -39,17 +47,16 @@ order by 1 desc;
 --554 unique artist_spotify_id (this is due to the fact that some tracks are collabos, 
 --although only the name of the top artist appears in the chart
 
-/*
+
 -- join the two dataset to get list of unique artists using mbid
 drop table if exists dim_mbArtist cascade;
+
 create table dim_mbArtist as 
-select b.artist_mbid, b.artist_spotify_id, a.artist
-from tbl_unique_artist_name a 
-left outer join tbl_unique_artist_mbid b
-on lower(trim(a.artist)) = lower(trim(b.artist_name))
-where b.artist_mbid is not null ;
+select gid, name, type, gender
+from mb_all_artist a 
+where ended = False;
 --405 unique artist with mbid from a total of 554 (149 without mbid)
-*/
+
 
 -- join the two dataset to get list of unique artists usng spotify_id
 drop table if exists dim_spotifyArtist cascade;
