@@ -1,0 +1,59 @@
+* Issues during data analysis and processing
+1. 	Issue: Artists RussMB and Russ Millions have the same mbid but different name.
+	Action Taken: Update to RussMB in spotify_top_200_weekly and spotify_track_details
+		update spotify_top_200_weekly set  artist = 'RussMB'
+		where artist in ('RussMB', 'Russ Millions');
+
+		update spotify_track_details set  artist_fychart_name = 'RussMB'
+		where artist_mbid = 'b2252b38-dbbc-47dc-b7c7-1dfc3cd2dd59';
+
+2. 	Issue: Error creating foreign key between venued_id (float) on songkick_uk_events and venue_id songkick_uk_venues (int) 
+	Action Taken: Change venue_id on songkick_uk_venues to float datatype
+		ALTER TABLE public.songkick_uk_venues ALTER COLUMN venue_id TYPE float8 USING venue_id::float8;
+		
+3.	Issue: Events with the same event_id having different popularity index.
+	Action Taken: Update events with the average of popularity index
+
+		update songkick_uk_events 
+		set popularity = (select avg(popularity) from songkick_uk_events de2 where de2.event_id = 32538374)
+		where event_id in (32538374);
+
+		update songkick_uk_events 
+		set popularity = (select avg(popularity) from songkick_uk_events de2 where de2.event_id = 39050644)
+		where event_id in (39050644);
+
+		update songkick_uk_events 
+		set popularity = (select avg(popularity) from songkick_uk_events de2 where de2.event_id = 35186709)
+		where event_id in (35186709);
+
+		update songkick_uk_events 
+		set popularity = (select avg(popularity) from songkick_uk_events de2 where de2.event_id = 36819199)
+		where event_id in (36819199);
+
+		update songkick_uk_events 
+		set popularity = (select avg(popularity) from songkick_uk_events de2 where de2.event_id = 36894999)
+		where event_id in (36894999);
+
+		update songkick_uk_events 
+		set popularity = (select avg(popularity) from songkick_uk_events de2 where de2.event_id = 38038984)
+		where event_id in (38038984);
+
+4. 	Issue: Events with venue id but no venue details
+	Action Taken: Exclude from event venue analysis.
+		/*
+		event_id	Venue_id
+		38949857	3000119
+		36898559	3890299
+		37950739	3463554
+		38772909	2597493
+		38140654	4233369
+		38258009	4272494
+		37807219	4233369
+		39182420	755696
+		37545514	4233369
+		39585878	4386949
+		*/
+		
+5. 	Issue: About 30% (20934 out of 63995) events have no start-time.
+	Action Taken: Excluded from the event start time analysis 
+	

@@ -24,20 +24,6 @@ order by 1;
 
 ALTER TABLE dim_dayofweek ADD CONSTRAINT dim_dayofweek_pk PRIMARY KEY (day_id);
 
---**************************************
--- Derive EventStartTime Dimension Table
---**************************************
-drop table if exists dim_event_start_time cascade;
-
-create table dim_event_start_time as
-SELECT distinct to_char(start_time, 'HH24MI') as start_time_id, 
-to_char(start_time, 'HH24') as hour_of_day,
-start_time
-FROM songkick_uk_events
-where to_char(start_time, 'HH24MI') != '1111' --exclude events with missing start time - total of 20934 (30%) out of 69335 events
-order by 1;
-
-ALTER TABLE public.dim_event_start_time ADD CONSTRAINT dim_event_start_time_pk PRIMARY KEY (start_time_id);
 
 --******************************************
 --	Create dim_artist_group table
